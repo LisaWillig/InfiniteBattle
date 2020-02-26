@@ -64,11 +64,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pool")
 	void SetPool(UActorPool* InPool);
 
+	void SetActorPool();
+
 
 	void PositionNavMeshBoundsVolume();
 	float calculateRadius(TSubclassOf<AActor> ToSpawn);
 
 	UActorPool* Pool;
+	UActorPool* AllActors;
+
 	AActor* NavMeshBoundsVolume;
 	UPROPERTY(EditDefaultsOnly, Category = "Navigation")
 	FVector NavigationBoundsOffset; 

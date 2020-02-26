@@ -22,6 +22,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Pool")
 	class UActorPool* NavMeshBoundsVolumePool; 
+	class UActorPool* AllActorPool;
 
 private:
 	void AddToPool(class ANavMeshBoundsVolume *VolumeToAdd);

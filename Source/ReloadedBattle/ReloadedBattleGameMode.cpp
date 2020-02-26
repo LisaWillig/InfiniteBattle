@@ -2,7 +2,6 @@
 
 #include "ReloadedBattleGameMode.h"
 #include "ReloadedBattleHUD.h"
-#include "Character_1P/FirstPersonCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AReloadedBattleGameMode::AReloadedBattleGameMode()

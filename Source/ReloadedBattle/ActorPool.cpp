@@ -13,8 +13,6 @@ UActorPool::UActorPool()
 	// ...
 }
 
-
-
 AActor* UActorPool::Checkout()
 {
 	if (Pool.Num() == 0) {

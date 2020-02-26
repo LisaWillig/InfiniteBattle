@@ -19,6 +19,7 @@ AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
 	HUDClass = AReloadedBattleHUD::StaticClass();
 
 	NavMeshBoundsVolumePool = CreateDefaultSubobject<UActorPool>(FName("Nav Mesh Bounds Volume Pool"));
+	AllActorPool = CreateDefaultSubobject<UActorPool>(FName("All Actor Pool"));
 }
 
 void AInfiniteTerrainGameMode::PopulateBoundsVolumePool() {

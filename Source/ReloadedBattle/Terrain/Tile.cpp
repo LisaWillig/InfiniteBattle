@@ -22,13 +22,20 @@ void ATile::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 }
 
 void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	if (Pool != nullptr && NavMeshBoundsVolume != nullptr) {
 		Pool->Return(NavMeshBoundsVolume);
 	}
+	if (AllActors != nullptr) {
+		for (auto actor : AllActors->Pool) {
+			//this->Des
+			UE_LOG(LogTemp, Warning, TEXT("This actor is destroyed: %s"), *actor->GetName())
+				actor->Destroy();
+		}
+	}
+	else { UE_LOG(LogTemp, Error, TEXT("No actor found"))}
 	Super::EndPlay(EndPlayReason);
 	
 }
@@ -105,6 +112,7 @@ void ATile::PlaceActor(TSubclassOf<AActor> ToSpawn, const FSpawnPosition& SpawnP
 	Spawned->SetActorRelativeLocation(SpawnPosition.Location);
 	Spawned->SetActorRelativeRotation(FRotator(0, FMath::RandRange(0, 360), 0));
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	//AllActors->Add(Spawned);
 }
 
 void ATile::PlaceActor(TSubclassOf<APawn> ToSpawn, const FSpawnPosition& SpawnPosition) {
@@ -116,8 +124,6 @@ void ATile::PlaceActor(TSubclassOf<APawn> ToSpawn, const FSpawnPosition& SpawnPo
 	Spawned->SpawnDefaultController();
 	Spawned->Tags.Add(FName("Guard"));
 }
-
-
 
 bool ATile::DoesCollide(FVector Location, float Radius) {
 	FHitResult FHitResult;
