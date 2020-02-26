@@ -9,6 +9,7 @@
 
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
 
 
 #include "Camera/CameraComponent.h"
@@ -85,15 +86,26 @@ public:
 	UPROPERTY()
 	class UAnimInstance* TP_AnimInstance;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision")
+	UCapsuleComponent* TouchCapsule;
+
 
 	/** Fires a projectile. */
 	UFUNCTION(BlueprintCallable, Category = "Shooting")
 	void OnFire();
 
+	UFUNCTION(BlueprintCallable, Category = "Shooting")
+	void Delete();
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// Called when the game starts or when spawned
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+
 
 
 

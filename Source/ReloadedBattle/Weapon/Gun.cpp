@@ -9,10 +9,16 @@ AGun::AGun()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	TouchCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CollisionCylinder"));
+	TouchCapsule->InitCapsuleSize(30.0f, 80.0f);
+	TouchCapsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	TouchCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+	RootComponent = TouchCapsule;
+
 	// Create a gun mesh component
 	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
-	FP_Gun->bCastDynamicShadow = false;
-	FP_Gun->CastShadow = false;
+	FP_Gun->bCastDynamicShadow = true;
+	FP_Gun->CastShadow = true;
 	FP_Gun->SetupAttachment(RootComponent);
 
 	FP_MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
@@ -70,6 +76,27 @@ void AGun::BeginPlay()
 		// TODO Get Character Mesh
 		// Mesh1P->SetHiddenInGame(false, true);
 	}
+}
+
+void AGun::EndPlay(const EEndPlayReason::Type EndPlayReason) {
+	UE_LOG(LogTemp, Warning, TEXT("Actor deleted"))
+	Super::EndPlay(EndPlayReason);
+
+}
+
+void AGun::Delete() {
+	UE_LOG(LogTemp, Warning, TEXT("Actor deleted"))
+
+	this->FP_Gun->DestroyComponent();
+	this->FP_MuzzleLocation->DestroyComponent();
+	this->R_MotionController->DestroyComponent();
+	this->L_MotionController->DestroyComponent();
+	this->VR_MuzzleLocation->DestroyComponent();
+	this->VR_Gun->DestroyComponent();
+	this->TouchCapsule->DestroyComponent();
+
+	this->Destroy();
+
 }
 
 void AGun::OnFire()

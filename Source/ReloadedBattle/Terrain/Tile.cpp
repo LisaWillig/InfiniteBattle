@@ -35,7 +35,7 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 				actor->Destroy();
 		}
 	}
-	else { UE_LOG(LogTemp, Error, TEXT("No actor found"))}
+	//else { UE_LOG(LogTemp, Error, TEXT("No actor found"))}
 	Super::EndPlay(EndPlayReason);
 	
 }
