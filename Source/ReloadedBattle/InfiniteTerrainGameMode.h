@@ -24,6 +24,11 @@ public:
 	class UActorPool* NavMeshBoundsVolumePool; 
 	class UActorPool* AllActorPool;
 
+	TMap<TSubclassOf<class AActor>, float> ActorSize;
+
+	TMap<TSubclassOf<class AActor>, float> GetRadiusSize();
+	void AddRadiusSize(TSubclassOf<class AActor>, float);
+
 private:
 	void AddToPool(class ANavMeshBoundsVolume *VolumeToAdd);
 

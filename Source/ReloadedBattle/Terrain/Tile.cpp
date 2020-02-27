@@ -4,6 +4,8 @@
 #include "Tile.h"
 #include "../ActorPool.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
+#include "Kismet/GameplayStatics.h"
+#include "../InfiniteTerrainGameMode.h"
 
 
 // Sets default values
@@ -15,11 +17,21 @@ ATile::ATile()
 	NavigationBoundsOffset = FVector(2000, 0, 0);
 	MinExtend = FVector(100, -2000, 0);
 	MaxExtend = FVector(4000, 2000, 0);
+
 }
 
 // Called when the game starts or when spawned
 void ATile::BeginPlay()
 {
+	
+	GameModeBase = UGameplayStatics::GetGameMode(GetWorld());
+	Instance = Cast<AInfiniteTerrainGameMode>(GameModeBase);
+	/*if (Instance != nullptr) {
+		ActorSize = Instance->GetRadiusSize();
+		Instance->ActorSize
+	}*/
+	UE_LOG(LogTemp, Warning, TEXT("Begin Play"))
+
 	Super::BeginPlay();
 
 }
@@ -28,14 +40,6 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	if (Pool != nullptr && NavMeshBoundsVolume != nullptr) {
 		Pool->Return(NavMeshBoundsVolume);
 	}
-	if (AllActors != nullptr) {
-		for (auto actor : AllActors->Pool) {
-			//this->Des
-			UE_LOG(LogTemp, Warning, TEXT("This actor is destroyed: %s"), *actor->GetName())
-				actor->Destroy();
-		}
-	}
-	//else { UE_LOG(LogTemp, Error, TEXT("No actor found"))}
 	Super::EndPlay(EndPlayReason);
 	
 }
@@ -58,39 +62,53 @@ void ATile::PositionNavMeshBoundsVolume()
 }
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int spawnMin, int spawnMax, float scaleMin, float scaleMax) {
-	float Radius = calculateRadius(ToSpawn);
-	RandomlyPlaceActors(ToSpawn, spawnMin, spawnMax, scaleMin, scaleMax, Radius);
+	calculateRadius(ToSpawn);
+	RandomlyPlaceActors(ToSpawn, spawnMin, spawnMax, scaleMin, scaleMax);
 }
 
 void ATile::PlaceAIPawns(TSubclassOf<AActor> ToSpawn, int spawnNumber) {
-	float Radius = 50;
-	RandomlyPlaceActors(ToSpawn, spawnNumber, spawnNumber, 1, 1, Radius);
+	if (!Instance->ActorSize.Contains(ToSpawn)) {
+		Instance->ActorSize.Add(ToSpawn, 50);
+	}
+	RandomlyPlaceActors(ToSpawn, spawnNumber, spawnNumber, 1, 1);
 	}
 
+
 template<class T>
-void ATile::RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int spawnMin, int spawnMax, float scaleMin, float scaleMax, float Radius) {
+void ATile::RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int spawnMin, int spawnMax, float scaleMin, float scaleMax) {
+
 	int spawnNumber = FMath::RandRange(spawnMin, spawnMax);
 	FSpawnPosition SpawnPosition;
 
 	for (int i = 0; i < spawnNumber; i++) {
 		SpawnPosition.Scale = FMath::RandRange(scaleMin, scaleMax);
-		bool found = FindEmptyLocation(Radius, SpawnPosition.Scale, SpawnPosition.Location);
+		bool found; 
+		if (ActorSize.Num() != 0) {
+			found = FindEmptyLocation(ActorSize[ToSpawn], SpawnPosition.Scale, SpawnPosition.Location);
+		}
+		else { 
+			found = FindEmptyLocation(100, SpawnPosition.Scale, SpawnPosition.Location); 
+		}
 		if (found) {
 			PlaceActor(ToSpawn, SpawnPosition);
 		}
 	}
 }
 
-float ATile::calculateRadius(TSubclassOf<AActor> ToSpawn) {
-	/*FVector BoundsExtent;
-	FVector Origin;
-	AActor* TestObject = GetWorld()->SpawnActor(ToSpawn);
-	TestObject->GetActorBounds(false, Origin, BoundsExtent);
-	TestObject->Destroy();
-	BoundsExtent.Z = 0;
-	float ImprovedRadii = BoundsExtent.Size();
-	float Radius = ImprovedRadii * 1.1;*/
-	return 100;
+void ATile::calculateRadius(TSubclassOf<AActor> ToSpawn) {
+	
+	if (!Instance->ActorSize.Contains(ToSpawn)) {
+		FVector BoundsExtent;
+		FVector Origin;
+		AActor* TestObject = GetWorld()->SpawnActor(ToSpawn);
+		TestObject->GetActorBounds(false, Origin, BoundsExtent);
+		TestObject->Destroy();
+		BoundsExtent.Z = 0;
+		float ImprovedRadii = BoundsExtent.Size();
+		float Radius = ImprovedRadii * 1.1; 
+		Instance->ActorSize.Add(ToSpawn, Radius);
+		UE_LOG(LogTemp, Warning, TEXT("Actorsize Calculated"))
+	}
 }
 
 bool ATile::FindEmptyLocation(float Radius, float Scale, FVector& SpawnPoint){

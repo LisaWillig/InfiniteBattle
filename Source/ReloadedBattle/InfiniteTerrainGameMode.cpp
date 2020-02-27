@@ -20,6 +20,8 @@ AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
 
 	NavMeshBoundsVolumePool = CreateDefaultSubobject<UActorPool>(FName("Nav Mesh Bounds Volume Pool"));
 	AllActorPool = CreateDefaultSubobject<UActorPool>(FName("All Actor Pool"));
+
+	ActorSize = TMap<TSubclassOf<class AActor>, float>();
 }
 
 void AInfiniteTerrainGameMode::PopulateBoundsVolumePool() {
@@ -36,6 +38,14 @@ void AInfiniteTerrainGameMode::PopulateBoundsVolumePool() {
 
 void AInfiniteTerrainGameMode::AddToPool(class ANavMeshBoundsVolume *VolumeToAdd) {
 	NavMeshBoundsVolumePool->Add(VolumeToAdd);
+}
+
+TMap<TSubclassOf<AActor>, float> AInfiniteTerrainGameMode::GetRadiusSize() {
+	return ActorSize;
+}
+
+void AInfiniteTerrainGameMode::AddRadiusSize(TSubclassOf<AActor> ToSpawn, float Radius) {
+	ActorSize.Add(ToSpawn, Radius);
 }
 
 

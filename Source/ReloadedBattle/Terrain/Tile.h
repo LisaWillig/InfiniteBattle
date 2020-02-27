@@ -7,6 +7,7 @@
 #include "Tile.generated.h"
 
 class UActorPool; 
+class AInfiniteTerrainGameMode;
 
 USTRUCT()
 struct FSpawnPosition {
@@ -54,8 +55,7 @@ public:
 		int spawnMin,
 		int spawnMax,
 		float scaleMin,
-		float scaleMax,
-		float Radius);
+		float scaleMax);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	void PlaceAIPawns(TSubclassOf<AActor> ToSpawn,
@@ -66,10 +66,6 @@ public:
 
 	void SetActorPool();
 
-
-	void PositionNavMeshBoundsVolume();
-	float calculateRadius(TSubclassOf<AActor> ToSpawn);
-
 	UActorPool* Pool;
 	UActorPool* AllActors;
 
@@ -77,6 +73,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Navigation")
 	FVector NavigationBoundsOffset; 
 
+	AGameModeBase* GameModeBase;
+	AInfiniteTerrainGameMode* Instance;
+	TMap<TSubclassOf<AActor>, float> ActorSize;
 	/*TArray<FSpawnPosition> RandomSpawnPositions(
 		float Radius, 
 		int spawnMin, 
@@ -90,6 +89,13 @@ private:
 	void PlaceActor(TSubclassOf<AActor> ToSpawn, const FSpawnPosition& SpawnPosition);
 	void PlaceActor(TSubclassOf<APawn> ToSpawn, const FSpawnPosition& SpawnPosition);
 	bool FindEmptyLocation(float Radius, float Scale, FVector& SpawnPoint);
+
+	
+
+	void PositionNavMeshBoundsVolume();
+	void calculateRadius(TSubclassOf<AActor> ToSpawn);
+
+	
 	
 
 };
