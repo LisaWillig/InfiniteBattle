@@ -32,8 +32,6 @@ void AInfiniteTerrainGameMode::PopulateBoundsVolumePool() {
 		AddToPool(*VolumeIterator);
 		++VolumeIterator; // NOT ActorIterator++
 	}
-
-
 }
 
 void AInfiniteTerrainGameMode::AddToPool(class ANavMeshBoundsVolume *VolumeToAdd) {
